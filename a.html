@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retail Product Categories</title>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-around;
+        }
+        .list {
+            margin: 20px;
+        }
+        .table-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 10px;
+            min-width: 250px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .instructions {
+            /* text-align: center; */
+            margin: 20px;
+        }
+        .instructions .instruction {
+            display: none;
+        }
+        .instructions .instruction.active {
+            display: block;
+        }
+        .instructions button {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+        .href-button {
+            background-color: blue;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+    <script>
+        let currentInstruction = 0;
+
+        function showInstruction(index) {
+            const instructions = document.querySelectorAll('.instruction');
+            instructions.forEach((instruction, i) => {
+                instruction.classList.toggle('active', i === index);
+            });
+        }
+
+        function nextInstruction() {
+            const instructions = document.querySelectorAll('.instruction');
+            currentInstruction = (currentInstruction + 1) % instructions.length;
+            showInstruction(currentInstruction);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            showInstruction(currentInstruction);
+        });
+
+        function toggle(source, listId) {
+            const checkboxes = document.querySelectorAll(`#${listId} input[type="checkbox"]`); 
+            // Toggle checkboxes based on the source checkbox
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i] != source)
+                    checkboxes[i].checked = source.checked;
+            }
+            filterTable(listId);
+        }
+
+        function updateSelectAll(listId) {
+            const selectAllCheckbox = document.querySelector(`#${listId} input[type="checkbox"][onclick*="toggle"]`);
+            const checkboxes = document.querySelectorAll(`#${listId} input[type="checkbox"]:not([onclick*="toggle"])`);
+            selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+            filterTable(listId);
+        }
+
+        function filterTable(listId) {
+            const selectAllCheckbox = document.querySelector(`#${listId} input[type="checkbox"][onclick*="toggle"]`);
+            const checkboxes = document.querySelectorAll(`#${listId} input[type="checkbox"]:not([onclick*="toggle"])`);
+            const selectedCategories = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.nextSibling.textContent.trim());
+            const tableId = listId === 'list1' ? 'table1' : 'table2';
+            const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+            rows.forEach(row => {
+                const category = row.querySelector('td').textContent.trim();
+                if (listId === 'list2' && selectAllCheckbox.checked) {
+                    row.style.display = '';
+                } else if (selectedCategories.includes(category)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const list1Checkboxes = document.querySelectorAll('#list1 input[type="checkbox"]:not([onclick*="toggle"])');
+            list1Checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateSelectAll('list1');
+                    filterTable('list1');
+                });
+            });
+            // Initial filter
+            filterTable('list1');
+        });
+    </script>
+</head>
+<body>
+    <div style="text-align: right;">
+        <a href="index.html" class="href-button">Volver al inicio</a>
+    </div>
+    <div class="instructions">
+        <div class="instruction active">
+            <h2>Instrucción 1: Comprendiendo la Prueba</h2>
+            <p><strong>Situación:</strong> Eres un analista de ventas en una empresa de retail. Tu equipo está probando dos interfaces (A y B) para filtrar y analizar datos de ventas por categoría. Tu objetivo es realizar cuatro tareas específicas y decidir cuál interfaz es más fácil de usar.</p>
+            <p>Si cometes un error o te confundes, puedes actualizar la página y empezar de nuevo.</p>
+        </div>
+        <div class="instruction">
+            <h2>Instrucción 2: Probando la Función "Seleccionar Todo"</h2>
+            <p><strong>Situación:</strong> Estás en una reunión con tu equipo y necesitas mostrar un resumen general de todas las categorías de ventas. Para ello, decides probar la función <strong>"Seleccionar Todo"</strong> para asegurarte de que es rápida y eficiente.</p>
+            <p><strong>Pasos a seguir:</strong></p>
+            <p>1. Desmarca la opción "Seleccionar Todo" en ambos filtros (A y B).</p>
+            <p>2. Observa qué sucede con las selecciones de categorías.</p>
+            <p>3. Marca nuevamente la opción "Seleccionar Todo" en ambos filtros y verifica que todas las categorías vuelvan a aparecer en las tablas.</p>
+            <p><b>Recuerda el objetivo:</b> Mostrar un resumen general de todas las categorías de ventas.</p>
+        </div>
+        <div class="instruction">
+            <h2>Instrucción 3: Filtrando Categorías Relevantes para el Día de la Madre</h2>
+            <p><strong>Situación:</strong> Tu equipo quiere analizar qué categorías de productos tuvieron mayores ventas en mayo, cuando se celebra el <strong>Día de la Madre</strong>. Sabes que artículos como <em>Belleza y Cuidado Personal, Libros, Ropa, y Música</em> suelen ser regalos populares.</p>
+            <p><strong>Pasos a seguir:</strong></p>
+            <p>1. Desmarca todas las categorías en ambos filtros.</p>
+            <p>2. Selecciona solo las categorías relacionadas con el Día de la Madre.</p>
+            <p>3. Observa si las tablas (A y B) muestran correctamente las categorías elegidas.</p>
+            <p><b>Recuerda el objetivo: </b> Analizar las categorías de productos tuvieron mayores ventas el Día de la Madre.</p>
+        </div>
+        <div class="instruction">
+            <h2>Instrucción 4: Comparando una Sola Categoría en Ambas Tablas</h2>
+            <p><strong>Situación:</strong> Un directivo te ha pedido un informe sobre las ventas de <strong>Electrónica</strong>, ya que la empresa quiere saber si las promociones recientes en esta categoría han sido efectivas.</p>
+            <p><strong>Pasos a seguir:</strong></p>
+            <p>1. Desmarca todas las categorías en ambos filtros.</p>
+            <p>2. Selecciona únicamente Electrónica en ambos filtros.</p>
+            <p>3. Compara los datos de ventas en la Tabla A y la Tabla B.</p>
+        </div>
+        <div class="instruction">
+            <h2>Instrucción 5: Probando la Selección Múltiple de Categorías</h2>
+            <p><strong>Situación:</strong> Tu equipo está evaluando combinaciones de productos que suelen comprarse juntos para identificar oportunidades de ventas cruzadas.</p>
+            <p><strong>Pasos a seguir:</strong></p>
+            <p>1. Selecciona tres categorías al azar en el Filtro A.</p>
+            <p>2. Selecciona tres categorías diferentes en el Filtro B.</p>
+            <p>3. Observa cómo se actualizan las tablas.</p>
+            <p>4. Añade una categoría más en cada filtro y evalúa si el sistema responde correctamente.</p>
+            <p>_Puedes volver al inicio presionando el boton superior derecho (Volver al inicio)_</p>
+        </div>
+        <button onclick="nextInstruction()">Next</button>
+    </div>
+    <div class="container">
+        <!-- Filter -->
+        <div class="list" id="list1">
+            <h3>Filter A</h3>
+            <input type="checkbox" onclick="toggle(this, 'list1')" checked> Select All<br>
+            <hr />
+            <input type="checkbox" checked> Electronics<br>
+            <input type="checkbox" checked> Clothing<br>
+            <input type="checkbox" checked> Home & Kitchen<br>
+            <input type="checkbox" checked> Beauty & Personal Care<br>
+            <input type="checkbox" checked> Sports & Outdoors<br>
+            <input type="checkbox" checked> Toys & Games<br>
+            <input type="checkbox" checked> Automotive<br>
+            <input type="checkbox" checked> Books<br>
+            <input type="checkbox" checked> Music<br>
+            <input type="checkbox" checked> Office Supplies<br>
+        </div>
+        <!-- Table -->
+        <div>
+            <h3>Table A</h3>
+            <table id="table1">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Sales</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Electronics</td>
+                        <td>$1000</td>
+                    </tr>
+                    <tr>
+                        <td>Clothing</td>
+                        <td>$500</td>
+                    </tr>
+                    <tr>
+                        <td>Home & Kitchen</td>
+                        <td>$700</td>
+                    </tr>
+                    <tr>
+                        <td>Beauty & Personal Care</td>
+                        <td>$300</td>
+                    </tr>
+                    <tr>
+                        <td>Sports & Outdoors</td>
+                        <td>$400</td>
+                    </tr>
+                    <tr>
+                        <td>Toys & Games</td>
+                        <td>$200</td>
+                    </tr>
+                    <tr>
+                        <td>Automotive</td>
+                        <td>$600</td>
+                    </tr>
+                    <tr>
+                        <td>Books</td>
+                        <td>$150</td>
+                    </tr>
+                    <tr>
+                        <td>Music</td>
+                        <td>$250</td>
+                    </tr>
+                    <tr>
+                        <td>Office Supplies</td>
+                        <td>$350</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
